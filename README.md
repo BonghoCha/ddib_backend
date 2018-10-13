@@ -78,6 +78,12 @@ enter [localhost]:3000/api
 - Return : json file including all category
 - Example : { results: [{ID: ,name: }, ...]}  
 
+### **/supplier/[supplier_id]**
+- *Method : GET*
+- URL : [server-name]/api/supplier/[supplier_id]
+- Return : json file including one supplier information 
+- Example : {ID: , rname: , address: , dlprice: ,}  
+
 ## Slack
 
 ddib-backend.slack.com

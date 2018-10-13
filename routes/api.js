@@ -1,6 +1,11 @@
 // API 코드
 // Author : KJ
 // 2018.10.12
+//
+// Supplier Information GET APT 작성
+// Author : KJ
+// Modified-Date : 2018.10.13
+
 var express = require('express');
 var bodyParser = require('body-parser')
 
@@ -34,18 +39,19 @@ router.post('/customer', function(req, res, next){
   })
 })
 
-router.post('/supplier', function(req, res, next){
-  var post = req.body;
-  var id = post.sid;
-  var passwd = post.passwd;
+// Supplier Information GET API
+// Method : GET
+// URL : /api/supplier/[suppleirID]
+// 가맹업주의 정보를 제공하는 API
+router.get('/supplier/:supplierID', function(req, res, next){
+  var id =req.params.supplierID;
 
-  db.query(`SELECT * FROM supplier WHERE sid = ? AND passwd = ?;`, [id, passwd], function(error, supplier) {
+  db.query(`SELECT * FROM supplier WHERE sid = ?;`, [id], function(error, supplier) {
     if (error)
       throw error;
 
     var supplier_json = {
       ID: supplier[0].sid,
-      passwd: supplier[0].passwd,
       rname: supplier[0].rname,
       address: supplier[0].address,
       dlprice: supplier[0].dlprice
