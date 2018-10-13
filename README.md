@@ -78,6 +78,12 @@ enter [localhost]:3000/api
 - Return : json file including all category
 - Example : { results: [{ID: ,name: }, ...]}  
 
+### **/category/:categoryID**
+- *Method : GET*
+- URL : [server-name]/api/category/:categoryID
+- Return : json file including one category
+- Example : { name: }
+
 ## Slack
 
 ddib-backend.slack.com

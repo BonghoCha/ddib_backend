@@ -1,6 +1,11 @@
 // API 코드
 // Author : KJ
 // 2018.10.12
+//
+// One Category information GET API 작성
+// Author : KJ
+// Modified-Date : 2018-10-13
+
 var express = require('express');
 var bodyParser = require('body-parser')
 
@@ -79,6 +84,29 @@ router.get('/category', function(req, res, next){
     }
 
     category_json['results'] = results;
+    res.json(category_json);
+  })
+})
+
+// One Category Information GET API
+// Method : GET
+// URL : /api/category/:categoryID
+// 한 카테고리를 반환하는 API
+router.get('/category/:categoryID', function(req, res, next){
+  var id = req.params.categoryID;
+
+  db.query('SELECT * FROM category WHERE cateid = ?;', [id], function(error, category){
+    if (error)
+      throw error;
+    
+    if (category.length === 0){
+      res.send("Doesn't exist category!")
+      return false;
+    }
+    var category_json = {
+      name: category[0].name
+    };
+ 
     res.json(category_json);
   })
 })
