@@ -100,7 +100,7 @@ router.get('/category/:categoryID', function(req, res, next){
       throw error;
     
     if (category.length === 0){
-      res.send("Doesn't exist category!")
+      res.send("The category Doesn't exist!")
       return false;
     }
     var category_json = {
