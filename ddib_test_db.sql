@@ -26,7 +26,7 @@ CREATE TABLE `category` (
   `cateid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`cateid`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +35,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'한식'),(2,'중식'),(3,'일식'),(4,'양식'),(5,'분식'),(6,'야식'),(7,'신선품'),(8,'카페/디저트'),(9,'한식'),(10,'중식'),(11,'일식'),(12,'양식'),(13,'분식'),(14,'야식'),(15,'신선품'),(16,'카페/디저트');
+INSERT INTO `category` VALUES (1,'한식'),(2,'중식'),(3,'일식'),(4,'양식'),(5,'분식'),(6,'야식'),(7,'신선품'),(8,'카페/디저트'),(21,'ㅅ'),(22,'test'),(23,'test'),(24,'test');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -48,7 +48,7 @@ DROP TABLE IF EXISTS `customer`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `customer` (
   `cid` varchar(15) NOT NULL COMMENT 'customer phone number',
-  `passwd` varchar(20) DEFAULT NULL,
+  `passwd` varchar(40) DEFAULT NULL,
   `name` varchar(20) DEFAULT NULL,
   `address` varchar(30) DEFAULT NULL,
   `latitude` decimal(10,8) DEFAULT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 /*!40000 ALTER TABLE `customer` DISABLE KEYS */;
-INSERT INTO `customer` VALUES ('010-1111-1111','test','test','test',1.00000000,1.00000000),('010-1111-2222','password','조경제','서울특별시 성북구 12341234',NULL,NULL),('010-1423-2222','Dubak','김석희','서울특별시 마포구 12341234',NULL,NULL),('010-2222-3333','mypassword','john','경기도 구로시 12341234',NULL,NULL),('010-2323-2222','androidgood','김정아','대구광역시 중구 12341234',NULL,NULL),('010-3333-2222','mysqlgood','윤인성','대전광역시 중구 12341234',NULL,NULL),('010-4444-2222','hohomypassword','유재석','강원도 태백시 12341234',NULL,NULL),('010-5555-4444','12345678','박성훈','서울특별시 광진구 12341234',NULL,NULL);
+INSERT INTO `customer` VALUES ('010-1111-1111','test','test','test',1.00000000,1.00000000),('010-1111-2222','6HqB3fyP1e/Iz+Kd7ehVN7zeQUY=','조경제','서울특별시 성북구 12341234',NULL,NULL),('010-1212-9898','6HqB3fyP1e/Iz+Kd7ehVN7zeQUY=','test','test',1.00000000,1.00000000),('010-1423-2222','Dubak','김석희','서울특별시 마포구 12341234',NULL,NULL),('010-2222-3333','mypassword','john','경기도 구로시 12341234',NULL,NULL),('010-2323-2222','androidgood','김정아','대구광역시 중구 12341234',NULL,NULL),('010-3333-2222','mysqlgood','윤인성','대전광역시 중구 12341234',NULL,NULL),('010-4444-2222','hohomypassword','유재석','강원도 태백시 12341234',NULL,NULL),('010-5555-4444','12345678','박성훈','서울특별시 광진구 12341234',NULL,NULL),('111-1111-1122','Ha4DiMgbjNA+uB+9IK9+MmFLbjM=','test','test',1.00000000,1.00000000),('999-9999-9999','qySOKOfCQTUgiytn/kU8KgZfWvY=','admin','admin',1.00000000,1.00000000);
 /*!40000 ALTER TABLE `customer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -76,10 +76,10 @@ DROP TABLE IF EXISTS `faq`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `faq` (
   `fid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `question` varchar(45) DEFAULT NULL,
+  `question` longtext,
   `answer` longtext,
   PRIMARY KEY (`fid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -88,6 +88,7 @@ CREATE TABLE `faq` (
 
 LOCK TABLES `faq` WRITE;
 /*!40000 ALTER TABLE `faq` DISABLE KEYS */;
+INSERT INTO `faq` VALUES (1,'test','test'),(2,'test','test'),(3,'test','test'),(4,'ㄹㅇ묾누린ㅇ무ㅏㅣ룸ㄴ','ㅡㄹㅇ눔리ㅜㄴ아ㅣ룸');
 /*!40000 ALTER TABLE `faq` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -114,7 +115,7 @@ CREATE TABLE `favorites` (
 
 LOCK TABLES `favorites` WRITE;
 /*!40000 ALTER TABLE `favorites` DISABLE KEYS */;
-INSERT INTO `favorites` VALUES ('010-1423-2222','010-2323-5643'),('010-3333-2222','010-2323-5643'),('010-1111-2222','010-4456-2222'),('010-1423-2222','010-4456-2222'),('010-1111-2222','010-4563-2222'),('010-5555-4444','010-4563-2222'),('010-1423-2222','010-6767-4444'),('010-5555-4444','010-6767-4444'),('010-3333-2222','010-8888-3333'),('010-5555-4444','010-8888-3333'),('010-1111-2222','010-9999-2222'),('010-3333-2222','010-9999-2222');
+INSERT INTO `favorites` VALUES ('999-9999-9999','010-1423-2536'),('010-1423-2222','010-2323-5643'),('010-3333-2222','010-2323-5643'),('010-1111-2222','010-4456-2222'),('010-1423-2222','010-4456-2222'),('010-1111-2222','010-4563-2222'),('010-5555-4444','010-4563-2222'),('010-1423-2222','010-6767-4444'),('010-5555-4444','010-6767-4444'),('010-3333-2222','010-8888-3333'),('010-5555-4444','010-8888-3333'),('010-1111-2222','010-9999-2222'),('010-3333-2222','010-9999-2222');
 /*!40000 ALTER TABLE `favorites` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -138,6 +139,7 @@ CREATE TABLE `item` (
   `starttime` datetime DEFAULT NULL,
   `endtime` datetime DEFAULT NULL,
   `deliverable` tinyint(1) DEFAULT NULL COMMENT '배달 가능 불가능',
+  `count` int(11) DEFAULT NULL,
   PRIMARY KEY (`iid`),
   KEY `sid_idx` (`sid`),
   KEY `cateid_idx` (`cateid`),
@@ -152,7 +154,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,'010-9999-2222','순대국',1,6000,4000,'할머니가 만드는 엄청 맛있는 순대국','순대국.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',0),(2,'010-9999-2222','얼큰버섯순대국',1,7000,4500,'얼큰한 버섯 순대국','얼큰버섯순대국.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',0),(3,'010-9999-2222','영양순대국',1,7000,4500,'영양 순대국','영양순대국.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',0),(4,'010-8888-3333','설농탕',1,7000,4500,'맛있는 설농탕','설농탕.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',1),(5,'010-8888-3333','특설렁탕',1,8000,5500,'맛있는 특설렁탕','특설렁탕.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',1);
+INSERT INTO `item` VALUES (1,'010-9999-2222','순대국',1,6000,4000,'할머니가 만드는 엄청 맛있는 순대국','순대국.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',0,NULL),(2,'010-9999-2222','얼큰버섯순대국',1,7000,4500,'얼큰한 버섯 순대국','얼큰버섯순대국.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',0,NULL),(3,'010-9999-2222','영양순대국',1,7000,4500,'영양 순대국','영양순대국.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',0,NULL),(4,'010-8888-3333','설농탕',1,7000,4500,'맛있는 설농탕','설농탕.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',1,NULL),(5,'010-8888-3333','특설렁탕',1,8000,5500,'맛있는 특설렁탕','특설렁탕.jpg',0,'2018-10-04 18:00:00','2018-10-04 20:00:00',1,NULL);
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,14 +169,14 @@ CREATE TABLE `order` (
   `oid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `iid` bigint(20) unsigned DEFAULT NULL,
   `amount` int(11) unsigned DEFAULT NULL,
-  `orderstate` varchar(15) DEFAULT NULL,
+  `orderstate` varchar(15) DEFAULT 'waiting',
   `time` int(11) DEFAULT NULL COMMENT '소요 시간',
   `gid` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`oid`),
   KEY `iid_idx` (`iid`),
   KEY `fk_order_1_idx` (`gid`),
   CONSTRAINT `order_item` FOREIGN KEY (`iid`) REFERENCES `item` (`iid`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,7 +185,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,1,2,'waiting',NULL,20181102001),(2,4,1,'cooking',NULL,20181102001),(3,2,2,'cooked',NULL,20181102002),(4,3,1,'delivering',NULL,20181102002),(5,5,1,'complete',NULL,20181102002);
+INSERT INTO `order` VALUES (1,1,2,'waiting',NULL,20181102001),(2,4,1,'cooking',NULL,20181102001),(3,2,2,'cooked',NULL,20181102002),(4,3,1,'delivering',NULL,20181102002),(5,5,1,'complete',NULL,20181102002),(6,1,1,'waiting',1,201811093),(7,2,2,'waiting',2,201811093),(8,1,1,'waiting',1,201811094),(9,2,2,'waiting',2,201811094),(10,1,1,'waiting',1,201811095),(11,2,2,'waiting',1,201811095),(12,3,1,'waiting',1,201811095),(13,4,3,'waiting',1,201811095),(14,5,1,'waiting',1,201811095),(55,1,1,'waiting',1,201811096),(56,2,2,'waiting',1,201811096),(57,3,1,'waiting',1,201811096),(58,4,3,'waiting',1,201811096),(59,5,1,'waiting',1,201811096),(60,1,1,'waiting',1,201811097),(61,2,2,'waiting',1,201811097),(62,3,1,'waiting',1,201811097),(63,4,3,'waiting',1,201811097),(64,5,1,'waiting',1,201811097),(65,1,1,'waiting',1,201811098),(66,2,2,'waiting',1,201811098),(67,3,1,'waiting',1,201811098),(68,4,3,'waiting',1,201811098),(69,5,1,'waiting',1,201811098),(70,1,1,'waiting',1,201811099),(71,2,2,'waiting',1,201811099),(72,3,1,'waiting',1,201811099),(73,4,3,'waiting',1,201811099),(74,5,1,'waiting',1,201811099),(75,1,1,'waiting',1,2018110910),(76,2,2,'waiting',1,2018110910),(77,3,1,'waiting',1,2018110910),(78,4,3,'waiting',1,2018110910),(79,5,1,'waiting',1,2018110910),(80,1,1,'waiting',1,2018110911),(81,2,2,'waiting',1,2018110911),(82,3,1,'waiting',1,2018110911),(83,4,3,'waiting',1,2018110911),(84,5,1,'waiting',1,2018110911),(85,1,1,'waiting',1,2018110912),(86,2,2,'waiting',1,2018110912),(87,3,1,'waiting',1,2018110912),(88,4,3,'waiting',1,2018110912),(89,5,1,'waiting',1,2018110912),(90,1,1,'waiting',1,2018110913),(91,2,2,'waiting',1,2018110913),(92,3,1,'waiting',1,2018110913),(93,4,3,'waiting',1,2018110913),(94,5,1,'waiting',1,2018110913);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +199,7 @@ DROP TABLE IF EXISTS `order_group`;
 CREATE TABLE `order_group` (
   `gid` bigint(20) unsigned NOT NULL,
   `cid` varchar(15) DEFAULT NULL,
-  `orderdate` datetime DEFAULT NULL,
+  `orderdate` datetime DEFAULT CURRENT_TIMESTAMP,
   `payment` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`gid`),
   KEY `fk_order_group_1_idx` (`cid`),
@@ -211,7 +213,7 @@ CREATE TABLE `order_group` (
 
 LOCK TABLES `order_group` WRITE;
 /*!40000 ALTER TABLE `order_group` DISABLE KEYS */;
-INSERT INTO `order_group` VALUES (20181102001,'010-1111-2222','2018-10-04 18:30:00','creditcard'),(20181102002,'010-3333-2222','2018-10-04 19:30:00','visit');
+INSERT INTO `order_group` VALUES (201811090,'010-1111-2222','2018-11-09 06:58:53','test'),(201811091,'010-1111-2222','2018-11-09 06:59:32','test'),(201811092,'010-1111-2222','2018-11-09 07:00:44','test'),(201811093,'010-1111-2222','2018-11-09 07:48:15','test'),(201811094,'010-1111-2222','2018-11-09 12:06:54','test'),(201811095,'010-1111-2222','2018-11-09 16:33:36','credit'),(201811096,'010-1111-2222','2018-11-09 16:38:37','credit'),(201811097,'010-1111-2222','2018-11-09 16:38:43','credit'),(201811098,'010-1111-2222','2018-11-09 16:39:20','credit'),(201811099,'010-1111-2222','2018-11-09 16:43:21','credit'),(2018110910,'010-1111-2222','2018-11-09 16:43:27','credit'),(2018110911,'010-1111-2222','2018-11-09 16:43:39','credit'),(2018110912,'010-1111-2222','2018-11-09 16:44:07','credit'),(2018110913,'010-1111-2222','2018-11-09 16:50:38','credit');
 /*!40000 ALTER TABLE `order_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -254,15 +256,14 @@ DROP TABLE IF EXISTS `shopping_cart`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `shopping_cart` (
-  `scid` bigint(20) unsigned NOT NULL,
-  `cid` varchar(15) DEFAULT NULL,
-  `iid` bigint(20) unsigned DEFAULT NULL,
+  `cid` varchar(15) NOT NULL,
+  `iid` bigint(20) unsigned NOT NULL,
   `amount` int(11) unsigned DEFAULT NULL,
-  PRIMARY KEY (`scid`),
+  PRIMARY KEY (`cid`,`iid`),
   KEY `item_id_idx` (`iid`),
   KEY `fk_shopping_cart_customer_idx` (`cid`),
-  CONSTRAINT `fk_shopping_cart_customer` FOREIGN KEY (`cid`) REFERENCES `customer` (`cid`),
-  CONSTRAINT `shopping_cart_item` FOREIGN KEY (`iid`) REFERENCES `item` (`iid`)
+  CONSTRAINT `fk_shopping_cart_1` FOREIGN KEY (`cid`) REFERENCES `customer` (`cid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_shopping_cart_2` FOREIGN KEY (`iid`) REFERENCES `item` (`iid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -272,6 +273,7 @@ CREATE TABLE `shopping_cart` (
 
 LOCK TABLES `shopping_cart` WRITE;
 /*!40000 ALTER TABLE `shopping_cart` DISABLE KEYS */;
+INSERT INTO `shopping_cart` VALUES ('999-9999-9999',1,1),('999-9999-9999',2,5),('999-9999-9999',3,5);
 /*!40000 ALTER TABLE `shopping_cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -284,11 +286,13 @@ DROP TABLE IF EXISTS `supplier`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `supplier` (
   `sid` varchar(15) NOT NULL DEFAULT '' COMMENT 'supplier phone number',
-  `passwd` varchar(20) DEFAULT NULL,
+  `passwd` varchar(40) DEFAULT NULL,
   `rname` varchar(100) DEFAULT NULL,
   `address` varchar(30) DEFAULT NULL COMMENT '음식점 주소',
   `dlprice` int(11) DEFAULT NULL COMMENT '배달 가능 최소 가능 가격',
-  `sellcount` int(11) DEFAULT NULL COMMENT '전날 판매 개수(알림 서비스에 사용)',
+  `sellcount` int(11) DEFAULT '0' COMMENT '전날 판매 개수(알림 서비스에 사용)',
+  `latitude` decimal(10,8) DEFAULT NULL,
+  `longitude` decimal(10,8) DEFAULT NULL,
   PRIMARY KEY (`sid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -299,7 +303,7 @@ CREATE TABLE `supplier` (
 
 LOCK TABLES `supplier` WRITE;
 /*!40000 ALTER TABLE `supplier` DISABLE KEYS */;
-INSERT INTO `supplier` VALUES ('010-1423-2536','slslslsls','신선마트','서울특별시 마포구 12341234',9990,NULL),('010-2323-5643','ramen','파리바게트','대구광역시 중구 12341234',10000,NULL),('010-4456-2222','wow','매운탕먹고싶은날','강원도 태백시 12341234',7000,NULL),('010-4563-2222','heyman!','카페24','대전광역시 중구 12341234',9900,NULL),('010-6767-4444','whysoserious','돈돈돈돈','서울특별시 광진구 12341234',5000,NULL),('010-8888-3333','onboard','신선설농탕','경기도 구로시 12341234',15000,NULL),('010-9999-2222','password','할매순댓국','서울특별시 성북구 12341234',12000,NULL);
+INSERT INTO `supplier` VALUES ('010-1423-2536','slslslsls','신선마트','서울특별시 마포구 12341234',9990,NULL,NULL,NULL),('010-1783-9284','AghsTFPKGb+lFdkcu+x2tSQvtZk=','시골밥상','서울 어딘가',111111,0,1.00000000,1.00000000),('010-2323-5643','ramen','파리바게트','대구광역시 중구 12341234',10000,NULL,NULL,NULL),('010-2934-3827','AghsTFPKGb+lFdkcu+x2tSQvtZk=','시골밥상','서울 어딘가',111111,0,1.00000000,2.00000000),('010-4456-2222','wow','매운탕먹고싶은날','강원도 태백시 12341234',7000,NULL,NULL,NULL),('010-4563-2222','heyman!','카페24','대전광역시 중구 12341234',9900,NULL,NULL,NULL),('010-6767-4444','whysoserious','돈돈돈돈','서울특별시 광진구 12341234',5000,NULL,NULL,NULL),('010-8888-3333','onboard','신선설농탕','경기도 구로시 12341234',15000,NULL,NULL,NULL),('010-9999-2222','password','할매순댓국','서울특별시 성북구 12341234',12000,NULL,NULL,NULL),('999-9999-9999','qySOKOfCQTUgiytn/kU8KgZfWvY=','관리자','서울 어딘가',9999999,0,1.00000000,1.00000000);
 /*!40000 ALTER TABLE `supplier` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -366,10 +370,9 @@ DROP TABLE IF EXISTS `wishlist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `wishlist` (
-  `wlid` int(10) unsigned NOT NULL,
-  `cid` varchar(15) DEFAULT NULL,
-  `iid` bigint(20) unsigned DEFAULT NULL,
-  PRIMARY KEY (`wlid`),
+  `cid` varchar(15) NOT NULL,
+  `iid` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`cid`,`iid`),
   KEY `fk_wishlist_1_idx` (`iid`),
   KEY `fk_wishlist_2_idx` (`cid`),
   CONSTRAINT `fk_wishlist_1` FOREIGN KEY (`iid`) REFERENCES `item` (`iid`),
@@ -383,7 +386,7 @@ CREATE TABLE `wishlist` (
 
 LOCK TABLES `wishlist` WRITE;
 /*!40000 ALTER TABLE `wishlist` DISABLE KEYS */;
-INSERT INTO `wishlist` VALUES (1811020001,'010-1111-2222',3),(1811020002,'010-1111-2222',4),(1811020003,'010-4444-2222',1);
+INSERT INTO `wishlist` VALUES ('010-4444-2222',1),('999-9999-9999',2),('010-1111-2222',3),('010-1111-2222',4);
 /*!40000 ALTER TABLE `wishlist` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -396,4 +399,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-06 20:56:44
+-- Dump completed on 2018-11-14 19:53:12
