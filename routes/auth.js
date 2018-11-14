@@ -1,10 +1,18 @@
-// TODO : We should change parts of session to passport.
+// 인증에 관한 코드
+// Author : KJ
+// ..
+//
+// Author : KJ
+// Modified Date : 2018.11.07
+// 비밀번호 암호화 추가
+
 var express = require('express');
 var bodyParser = require('body-parser')
 var jwt = require('jsonwebtoken');
 
 var db = require('../lib/db')
 var jwtOptions = require('../lib/passport')
+var CryptoPasswd = require('../lib/passwordSecret')
 
 var router = express.Router();
 
@@ -19,10 +27,18 @@ var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next) {
 
   db.query('SELECT * FROM customer WHERE cid = ?', [jwt_payload.id], function(error, user) {
     if (error) {
-      tnext(null, false);
+      next(null, false);
     }
     if (user) {
-      next(null, user[0].cid);
+      var user_info = {
+        id : user[0].cid,
+          name : user[0].name,
+          permission : "customer"
+      }
+      if (user[0].cid === '999-9999-9999') {
+        user_info['permission'] = 'admin';
+      }
+      next(null, user_info);
     } else {
       next(null, false);
     }
@@ -39,31 +55,44 @@ router.use(bodyParser.urlencoded({
 }));
 
 router.post("/login/customer", function(req, res) {
+  var result = {
+    success : false
+  };
+
   if(req.body.cid && req.body.passwd){
     var name = req.body.cid;
     var password = req.body.passwd;
+  } else {
+    result['empty_params'] = true;
+    res.json(result);
   }
   // usually this would be a database call:
 
-  db.query('SELECT * FROM customer WHERE cid = ? AND passwd = ?', [name, password], function(error, user) {
+  db.query('SELECT * FROM customer WHERE cid = ?;', [name], function(error, user) {
     if (error) {
-      res.status(501).send({message:"Server Error"});
+      result['error'] = true;
+      res.status(501).send(result);
       return false;
     }
 
-    if( ! user ){
+
+    if( user <= 0){
       message = {message:"no such user found"}
       res.status(401).send(message);
+
       return false;
     }
   
-    if(user[0].passwd === password) {
+    if(CryptoPasswd.verify(user[0].passwd,password)) {
       // from now on we'll identify the user by the id and the id is the only personalized value that goes into our token
       var payload = {id: user[0].cid};
       var token = jwt.sign(payload, jwtOptions.secretOrKey);
-      res.json({message: "ok", token: token});
+      result['token'] = token;
+      result['success'] = true;
+      res.json(result);
     } else {
-      res.status(401).json({message:"passwords did not match"});
+      result['error'] = true;
+      res.status(401).json(result);
     }
   });
 });

@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `ddib` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `ddib`;
 -- MySQL dump 10.13  Distrib 5.7.24, for Linux (x86_64)
 --
 -- Host: localhost    Database: ddib
@@ -80,6 +82,7 @@ CREATE TABLE `faq` (
   `answer` longtext,
   PRIMARY KEY (`fid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +179,8 @@ CREATE TABLE `order` (
   KEY `iid_idx` (`iid`),
   KEY `fk_order_1_idx` (`gid`),
   CONSTRAINT `order_item` FOREIGN KEY (`iid`) REFERENCES `item` (`iid`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8;
+
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -389,6 +393,78 @@ LOCK TABLES `wishlist` WRITE;
 INSERT INTO `wishlist` VALUES ('010-4444-2222',1),('999-9999-9999',2),('010-1111-2222',3),('010-1111-2222',4);
 /*!40000 ALTER TABLE `wishlist` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'ddib'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `InsertOrders` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertOrders`(cid VARCHAR(20), payment varchar(20), iid longtext, amount longtext, `time` longtext, length int)
+BEGIN
+	declare gid bigint(20) unsigned;
+    declare insert_order longtext;
+    declare i int default 1;
+    declare iid_element varchar(30);
+    declare amount_element varchar(30);
+    declare time_element varchar(30);
+    declare errno int;
+    
+    declare exit handler for sqlexception
+    begin
+    get current diagnostics condition 1 errno = mysql_errno;
+SELECT errno AS MYSQL_ERROR;
+    ROLLBACK;
+    END;
+    
+    START TRANSACTION;
+    
+select
+    @order_group_count:=COUNT(*)
+FROM
+    order_group
+WHERE
+    DATE(orderdate) = DATE(NOW());
+    
+	set @gid = concat(date_format(date(now()), '%Y%m%d') , @order_group_count);
+    
+    INSERT INTO order_group (gid, cid, payment) VALUES (@gid, cid, payment);
+    
+    set @insert_order = "INSERT INTO `order` (iid, amount, time, gid) VALUES ";
+
+    WHILE i <= length DO
+		set @iid_element = SUBSTRING_INDEX(SUBSTRING_INDEX(iid, ';', i), ';', -1);
+        set @amount_element = SUBSTRING_INDEX(SUBSTRING_INDEX(amount, ';', i), ';', -1);
+        set @time_element = SUBSTRING_INDEX(SUBSTRING_INDEX(`time`, ';', i), ';', -1);
+		set @insert_order =  concat(@insert_order, "(", @iid_element, ",", @amount_element, ",", @time_element, ",", @gid, ")");
+        -- select @insert_order;
+        set i = i + 1;
+        if (i <= length) THEN
+			set @insert_order = concat(@insert_order, ",");
+		end if;
+	END WHILE;
+
+    
+    set @insert_order = concat(@insert_order , ";");
+    
+    prepare stmt FROM @insert_order;
+    EXECUTE stmt;
+    
+    commit work;
+select errno AS MYSQL_ERROR;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

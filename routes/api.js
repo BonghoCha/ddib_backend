@@ -9,13 +9,29 @@
 // Modified Date : 2018.11.06
 // Author : KJ
 // add sign_up api 
+//
+// Modified Date : 2018.11.07
+// Author : KJ
+// 비밀번호 암호화 추가
+//
+// Modified Date : 2018.11.07
+// Author : KJ
+// Add category post API 
+//
+// Modified Date : 2018.11.13
+// Author : KJ
+// 장바구니 목록 출력 api 추가
 
 var express = require('express');
 var bodyParser = require('body-parser')
+var passport = require("passport");
 
 var hello = require('../api/hello.json')
 var db = require('../lib/db')
+var CryptoPasswd = require('../lib/passwordSecret');
+
 var auth = require('../lib/auth')
+
 
 var router = express.Router();
 
@@ -24,7 +40,7 @@ router.get('/', function(req, res, next) {
   res.send(hello);
 });
 
-// Sign Up API
+// Customer Sign Up API
 // Method : POST
 // URL : /api/sign_up/customer
 // 회원가입 API
@@ -76,18 +92,94 @@ router.post('/sign_up/customer', function(req, res, next) {
         return false;
       }
       
-      // TODO : 비밀번호 암호화
+      passwd = CryptoPasswd.create(passwd);
+      
       db.query(`INSERT INTO customer 
       (cid, passwd, name, address, latitude, longitude) VALUES 
       (?, ?, ?, ?, ?, ?);`, [cid, passwd, name, address, latitude, longitude],
       function(error, user){
         if (error) {
-          throw errror;
+          res.json(result);
+          return false;
         }
         result['success'] = true;
         res.json(result);
       });
 
+    } else {
+      res.json(result);
+    }
+  })
+})
+
+// Supplier Sign Up API
+// Method : POST
+// Params : sid, passwd, rname, address, dlprice, latitude, longitude
+// URL : /api/sign_up/supplier
+// 가맹업주 회원가입 API
+router.post('/sign_up/supplier', function(req, res, next) {
+  var post = req.body;
+  var sid = post.sid;
+  var passwd = post.passwd;
+  var rname = post.rname;
+  var address = post.address;
+  var dlprice = post.dlprice;
+  var latitude = post.latitude;
+  var longitude = post.longitude;
+
+  var result = {};
+  result['success'] = false;
+  if (!(sid && passwd)) {
+    res.json(result);
+    return false;
+  }
+
+  var idError = false;
+  var passwdError = false;
+
+  // 1. 아이디 중복 체크
+  db.query('SELECT * FROM supplier WHERE sid = ?;', [sid], function(error, user){
+
+    if (error) {
+      throw error;
+    }
+    if (user.length <= 0) {
+
+      // 2. 아이디 패스워드 유효 체크 
+      
+      var regID = /^\d{3}-\d{3,4}-\d{4}$/;
+      var regPasswd = /^[a-z0-9_]{8,20}$/; 
+
+      if (!regID.test(sid)){
+        idError = true;
+      }
+      if (!regPasswd.test(passwd)) {
+        passwdError = true;
+      }
+      if (idError || passwdError) {
+        result['idError'] = idError;
+        result['passwdError'] = passwdError;
+
+        res.send(result);
+        return false;
+      }
+      
+      passwd = CryptoPasswd.create(passwd);
+      
+      db.query(`INSERT INTO supplier 
+      (sid, passwd, rname, address, dlprice, latitude, longitude) VALUES 
+      (?, ?, ?, ?, ?, ? ,?);`, [sid, passwd, rname, address, dlprice, latitude, longitude],
+      function(error, user){
+        if (error) {
+          res.json(result);
+          return false;
+        }
+
+        result['success'] = true;
+        res.json(result);
+      });
+    } else {
+      res.json(result);
     }
   })
 })
@@ -133,6 +225,59 @@ router.post('/supplier', function(req, res, next){
   })
 })
 
+// Order history API
+// Method : GET
+// URL : /api/order_history
+// 고객의 주문 내역 제공 api
+router.get("/order_history", passport.authenticate('jwt', { session: false }), function(req, res){
+  var cid = "";
+
+  var result = {
+    success : false
+  }
+  if (! (req.user.permission === 'customer' ||
+          req.user.permission === 'admin')) {
+    res.send(result);
+    return false; 
+  } else {
+    cid = req.user.id;
+  }
+
+  db.query(`SELECT 
+  A.*, B.oid, B.iid, B.amount, B.orderstate, B.\`time\`
+FROM
+  (SELECT 
+      *
+  FROM
+      ddib.order_group
+  WHERE
+      cid = ?) A
+      INNER JOIN
+  ddib.\`order\` B ON A.gid = B.gid
+ORDER BY orderdate DESC;`, [cid], function(error, results) {
+    if (error) {
+      res.status(501).json(result);
+    }
+
+    var orders = [];
+
+    for (var i = 0; i < results.length; i++){
+      orders[i] = {
+        gid : results[i].gid,
+        cid : results[i].cid,
+        order_date : results[i].orderdate,
+        payment : results[i].payment,
+        oid : results[i].oid,
+        iid : results[i].iid,
+        order_state : results[i].orderstate,
+        time : results[i].time
+      };
+    }
+
+    res.json(orders);
+  })
+});
+
 // Category API
 // Method : GET
 // URL : /api/category
@@ -159,6 +304,124 @@ router.get('/category', function(req, res, next){
     //category_json['results'] = results;
     res.json(results);
   })
+})
+
+
+// Category POST API
+// Method : POST
+// Parameters : name, token
+// URL : /api/category
+// 카테고리 등록 api
+router.post('/category', passport.authenticate('jwt', { session: false }), function(req, res, next){
+  var body = req.body;
+  var name = body.name;
+
+  var result = {
+    success : false
+  };
+  if (req.user.permission !== 'admin') {
+    result['permission'] = false;
+    res.send(result);
+    return false;
+  }
+  db.query('INSERT INTO category (name) VALUES (?);', [name], function(error, categorys){
+    if (error) {
+      res.status(501).send({message:"Server Error"});
+      return false;
+    }
+
+    result['success'] = true;
+
+    res.json(result);
+  })
+})
+
+// Shopping Cart Hisotry API
+// Method : GET
+// URL : /api/shopping_cart_history
+// 유저의 모든 장바구니를 반환하는 API
+router.get('/shopping_cart_history',passport.authenticate('jwt', { session: false }), function(req, res, next){
+
+  var cid = req.user.id;
+
+  db.query('SELECT * FROM shopping_cart WHERE cid = ?;', [cid], function(error, results){
+    if (error) {
+      res.send({ success : false });
+    }
+    
+    console.log(results)
+
+    if (results.length <= 0) {
+      res.send({ success : false });
+    }
+    var result = [];
+    
+    var i = 0;
+    while (i < results.length)
+    {
+      result[i] = {
+        ItemID : results[i].iid,
+        Amount : results[i].amount
+      }
+      i++;
+    }
+
+    res.json(result);
+  })
+})
+// Order POST API
+// Method : POST
+// Parameters : payment, iid, amount, time, length
+// iid, amount, time는 order 정보들로 1;2;3;4;5; 처럼 ;를 이용하여 구분한다.
+// URL : /api/order
+// 주문 등록 api
+router.post('/order', passport.authenticate('jwt', { session: false }), function(req, res, next){
+  var post = req.body;
+  var cid = "";
+  var payment = post.payment;
+  var iid = post.iid;
+  var amount = post.amount;
+  var time = post.time;
+  var length = post.length;
+
+  var result = {
+    success : false
+  }
+
+  // iid amount time params 크기가 틀리면 false 반환 
+  // TODO : string split
+  var iid_length = iid.split(';').length;
+  var amount_length = amount.split(';').length;
+  var time_length = time.split(';').length;
+ 
+  if ((iid_length !== amount_length) ||
+      (amount_length !== time_length)) {
+    res.json(result);
+    return false;
+  }
+
+  if (!(req.user.permission === 'customer' || 
+        req.user.permission === 'admin')) {
+    res.json(result);
+    return false;
+  } else {
+    cid = req.user.id;
+  }
+  
+  db.query('CALL InsertOrders(?, ?, ?, ?, ?, ?);', [cid, payment, iid, amount, time, length], function(error, results) {
+    if (error) {
+      res.json(result);
+      return false;
+    }
+
+    if (!( results[1][0].MYSQL_ERROR === null)) {
+      res.json(result);
+      return false;
+    }
+
+    result['success'] = true;
+    res.json(result)
+  });
 })
 
 // Want_to_buy API
@@ -189,6 +452,118 @@ router.post('/wtb', function(req, res, next){
     res.send(result);
   })
 })
+
+// favorites API
+// Method : POST
+// Header : token
+// Parameters : sid
+// URL : /api/favorites
+// 즐겨찾기 등록 api
+router.post('/favorites', passport.authenticate('jwt', { session: false }), function(req, res, next){
+  var post = req.body;
+  var sid = post.sid;
+  var cid = "";
+
+  var result = {
+    success : false
+  };
+
+  if(!(req.user.permission === "customer" ||
+    req.user.permission === "admin")){
+    res.send(result);
+    return false;
+  } else {
+    cid = req.user.id;
+  }
+
+  db.query(`INSERT INTO favorites (cid, sid) VALUES (?, ?);`,
+  [cid, sid], function(error, results){
+    if (error) {
+      result['error'] = true;
+      res.status(501).send(result);
+      return false;
+    }
+
+    result['success'] = true;
+    res.send(result);
+  })
+})
+
+// wishlist POST API
+// Method : POST
+// Parameters : iid
+// URL : /api/wishlist
+// 찜 등록 api
+router.post('/wishlist', passport.authenticate('jwt', { session: false }), function(req, res, next){
+  var post = req.body;
+  var cid = "";
+  var iid = post.iid;
+
+  var result = {
+    success : false
+  }
+
+  if(!(req.user.permission === 'customer' ||
+        req.user.permission === 'admin')) {
+          res.send(result);
+    return false;
+  } else {
+    cid = req.user.id;
+  }
+  db.query(`INSERT INTO wishlist (cid, iid) VALUES (?, ?);`,
+  [cid, iid], function(error, results){
+    if (error) {
+      res.status(501).json(result);
+      return false;
+    }
+
+    result['success'] = true;
+    res.send(result);
+  })
+});
+
+// Shopping Cart Post API
+// Method : POST
+// Headers : Authorization
+// Parameters : iid, amount
+// URL : /api/shopping_cart
+// 장바구니 등록 api
+router.post('/shopping_cart', passport.authenticate('jwt', { session: false }), function(req, res, next){
+  var post = req.body;
+  var cid = "";
+  var iid = post.iid;
+  var amount = post.amount;
+
+  var result = {
+    success : false
+  }
+
+  if (!amount) {
+    res.send(result);
+    return false;
+  }
+
+  if(!( req.user.permission === 'customer' ||
+        req.user.permission === 'admin' )) {
+    res.send(result);
+    return false;
+  } else {
+    cid = req.user.id;
+  }
+  db.query(`INSERT INTO shopping_cart (cid, iid, amount) VALUES (?, ?, ? );`,
+  [cid, iid, amount], function(error, results){
+    if (error) {
+      res.json(result);
+
+      return false;
+    }
+
+    result['success'] = true;
+
+    res.json(result);
+  })
+});
+
 
 // Alarm API
 // Method : POST
@@ -255,6 +630,44 @@ INNER JOIN \`order\` B ON A.gid = B.gid group by iid order by sum_amount desc, m
     })
   }
 })
+})
+
+// FAQ POST API
+// Method : POST
+// Parameters : token, question, answer
+// URL : /api/faq
+// FAQ 등록 api
+router.post('/faq', passport.authenticate('jwt', { session: false }), function(req, res, next){
+  var post = req.body;
+  var question = post.question;
+  var answer = post.answer;
+
+  var result = {
+    success : false
+  }
+
+  if (!( question && answer)) {
+    res.json(result);
+    return false;
+  }
+  // 권한 admin
+  if(req.user.permission !== 'admin'){
+    result['permssion'] = false;
+    res.json(result);
+    return false;
+  }
+
+  db.query(`INSERT INTO faq (question, answer) VALUES (? ,?);`,
+  [question, answer], function(error, results){
+    if (error) {
+      result['error'] = true;
+      res.status(501).send(result);
+      return false;
+    }
+
+    result['success'] = true;
+    res.send(result);
+  })
 })
 
 module.exports = router;
